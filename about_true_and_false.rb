@@ -10,7 +10,7 @@ class AboutTrueAndFalse < Neo::Koan
   end
 
   def test_true_is_treated_as_true
-    assert_equal __, truth_value(true)
+    assert_equal :true_stuff, truth_value(true)
   end
 
   def test_false_is_treated_as_false
@@ -26,8 +26,7 @@ class AboutTrueAndFalse < Neo::Koan
     assert_equal __, truth_value(0)
     assert_equal __, truth_value([])
     assert_equal __, truth_value({})
-    assert_equal __, truth_value("Strings")
-    assert_equal __, truth_value("")
+    assert_equal __, truth_value('Strings')
+    assert_equal __, truth_value('')
   end
-
 end
