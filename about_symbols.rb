@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/neo')
+require File.expand_path(File.dirname(__FILE__) + "/neo")
 
 class AboutSymbols < Neo::Koan
   def test_symbols_are_symbols
@@ -19,13 +19,14 @@ class AboutSymbols < Neo::Koan
     symbol1 = :a_symbol
     symbol2 = :a_symbol
 
-    assert_equal __, symbol1           == symbol2
+    assert_equal __, symbol1 == symbol2
     assert_equal __, symbol1.object_id == symbol2.object_id
   end
 
   def test_method_names_become_symbols
     symbols_as_strings = Symbol.all_symbols.map { |x| x.to_s }
-    assert_equal __, symbols_as_strings.include?("test_method_names_become_symbols")
+    assert_equal __,
+                 symbols_as_strings.include?("test_method_names_become_symbols")
   end
 
   # THINK ABOUT IT:
@@ -85,9 +86,7 @@ class AboutSymbols < Neo::Koan
 
   def test_symbols_cannot_be_concatenated
     # Exceptions will be pondered further down the path
-    assert_raise(___) do
-      :cats + :dogs
-    end
+    assert_raise(___) { :cats + :dogs }
   end
 
   def test_symbols_can_be_dynamically_created
