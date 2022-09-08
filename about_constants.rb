@@ -1,9 +1,8 @@
-require File.expand_path(File.dirname(__FILE__) + '/neo')
+require File.expand_path(File.dirname(__FILE__) + "/neo")
 
 C = "top level"
 
 class AboutConstants < Neo::Koan
-
   C = "nested"
 
   def test_nested_constants_may_also_be_referenced_with_relative_paths
@@ -47,7 +46,7 @@ class AboutConstants < Neo::Koan
   end
 
   def test_subclasses_inherit_constants_from_parent_classes
-    assert_equal __, Reptile.new.legs_in_reptile
+    assert_equal 4, Reptile.new.legs_in_reptile
   end
 
   # ------------------------------------------------------------------
@@ -63,11 +62,14 @@ class AboutConstants < Neo::Koan
   end
 
   def test_who_wins_with_both_nested_and_inherited_constants
-    assert_equal __, MyAnimals::Bird.new.legs_in_bird
+    assert_equal 2, MyAnimals::Bird.new.legs_in_bird
   end
 
   # QUESTION: Which has precedence: The constant in the lexical scope,
   # or the constant from the inheritance hierarchy?
+  # - const in the lexical scope wins
+  # - think, what requires more effort - to look for the answer in your neighborhood or to
+  # look in another neighborhood (parent class)
 
   # ------------------------------------------------------------------
 
@@ -78,10 +80,12 @@ class AboutConstants < Neo::Koan
   end
 
   def test_who_wins_with_explicit_scoping_on_class_definition
-    assert_equal __, MyAnimals::Oyster.new.legs_in_oyster
+    assert_equal 4, MyAnimals::Oyster.new.legs_in_oyster
   end
 
   # QUESTION: Now which has precedence: The constant in the lexical
   # scope, or the constant from the inheritance hierarchy?  Why is it
   # different than the previous answer?
+  # - here const in the inheritance heiracy wins - probably b/c lesical scope does not
+  # defind the lEGS const
 end
