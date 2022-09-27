@@ -29,8 +29,49 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 #
 # Your goal is to write the score method.
 
+def count_frequency_of_rolls(array)
+  array.each_with_object({}) do |roll, hash|
+    # initialize value to 0 if it doesnt exist
+    hash[roll] ||= 0
+    # then increment
+    hash[roll] += 1
+
+    # longer alt syntax
+    # if hash[roll]
+    #   hash[roll] += 1
+    # else
+    #   hash[roll] = 1
+    # end
+
+    hash
+  end
+end
+
+def num_of_triplets(value)
+  value / 3
+end
+
+def remainder_of_three(value)
+  value % 3
+end
+
 def score(dice)
-  # You need to write this method
+  # https://medium.com/@shirleyl/the-mystery-of-inject-in-ruby-d7fe6d6faed7
+  # using inject/reduce on hashes!!!
+  count_frequency_of_rolls(dice).reduce(0) do |sum, (key, value)|
+    if key == 1
+      sum += num_of_triplets(value) * 1000
+      sum += remainder_of_three(value) * 100
+      next sum
+    end
+
+    if key == 5
+      sum += remainder_of_three(value) * 50
+    end
+
+    sum += num_of_triplets(value) * (key * 100)
+    sum
+  end
 end
 
 class AboutScoringProject < Neo::Koan
@@ -75,3 +116,15 @@ class AboutScoringProject < Neo::Koan
   end
 
 end
+
+# LEARNING
+# as opposed to reduce in JS, inject/reduce in ruby can be called on hashs
+# #inject on Hashes
+# While #inject works the same way on hashes, there is one little trick that makes it easier to use on a hash. When inject passed over each key-value pair in a hash, it converts it first into an array.
+
+# {"one" => 1, "two" => 2, "three" => 3}.inject({}){|memo, hash| memo}
+# To call on the key value of the hash, you would need to use hash.first, and to call on the value of the hash you would need to use hash.last. And easier way to accomplish this is to declare two variables for the hash inside your block. See below:
+
+# {"one" => 1, "two" => 2}.inject({}){|memo, (key, value)| memo}
+# Now you can easily call key or value in your block, making your code much more readable.
+# https://medium.com/@shirleyl/the-mystery-of-inject-in-ruby-d7fe6d6faed7
