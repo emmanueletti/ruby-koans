@@ -1,14 +1,14 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    language_server-protocol (3.16.0.3)
+    language_server-protocol (3.17.0.1)
     prettier_print (0.1.0)
-    ruby-lsp (0.3.0)
-      language_server-protocol
+    ruby-lsp (0.3.2)
+      language_server-protocol (~> 3.17.0)
       sorbet-runtime
       syntax_tree (>= 3.4)
-    sorbet-runtime (0.5.10353)
-    syntax_tree (3.4.0)
+    sorbet-runtime (0.5.10461)
+    syntax_tree (3.6.1)
       prettier_print
 
 PLATFORMS

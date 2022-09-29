@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/neo')
+require File.expand_path(File.dirname(__FILE__) + "/neo")
 
 class AboutClasses < Neo::Koan
   class Dog
@@ -6,7 +6,7 @@ class AboutClasses < Neo::Koan
 
   def test_instances_of_classes_can_be_created_with_new
     fido = Dog.new
-    assert_equal __, fido.class
+    assert_equal Dog, fido.class
   end
 
   # ------------------------------------------------------------------
@@ -19,21 +19,19 @@ class AboutClasses < Neo::Koan
 
   def test_instance_variables_can_be_set_by_assigning_to_them
     fido = Dog2.new
-    assert_equal __, fido.instance_variables
+    assert_equal [], fido.instance_variables
 
     fido.set_name("Fido")
-    assert_equal __, fido.instance_variables
+    assert_equal [:@name], fido.instance_variables
   end
 
   def test_instance_variables_cannot_be_accessed_outside_the_class
     fido = Dog2.new
     fido.set_name("Fido")
 
-    assert_raise(___) do
-      fido.name
-    end
+    assert_raise(NoMethodError) { fido.name }
 
-    assert_raise(___) do
+    assert_raise(SyntaxError) do
       eval "fido.@name"
       # NOTE: Using eval because the above line is a syntax error.
     end
@@ -43,15 +41,15 @@ class AboutClasses < Neo::Koan
     fido = Dog2.new
     fido.set_name("Fido")
 
-    assert_equal __, fido.instance_variable_get("@name")
+    assert_equal "Fido", fido.instance_variable_get("@name")
   end
 
   def test_you_can_rip_the_value_out_using_instance_eval
     fido = Dog2.new
     fido.set_name("Fido")
 
-    assert_equal __, fido.instance_eval("@name")  # string version
-    assert_equal __, fido.instance_eval { @name } # block version
+    assert_equal "Fido", fido.instance_eval("@name") # string version
+    assert_equal "Fido", fido.instance_eval { @name } # block version
   end
 
   # ------------------------------------------------------------------
@@ -82,7 +80,6 @@ class AboutClasses < Neo::Koan
     end
   end
 
-
   def test_attr_reader_will_automatically_define_an_accessor
     fido = Dog4.new
     fido.set_name("Fido")
@@ -95,7 +92,6 @@ class AboutClasses < Neo::Koan
   class Dog5
     attr_accessor :name
   end
-
 
   def test_attr_accessor_will_automatically_define_both_read_and_write_accessors
     fido = Dog5.new
@@ -119,9 +115,7 @@ class AboutClasses < Neo::Koan
   end
 
   def test_args_to_new_must_match_initialize
-    assert_raise(___) do
-      Dog6.new
-    end
+    assert_raise(___) { Dog6.new }
     # THINK ABOUT IT:
     # Why is this so?
   end
@@ -178,7 +172,7 @@ class AboutClasses < Neo::Koan
   end
 
   def test_all_objects_support_to_s_and_inspect
-    array = [1,2,3]
+    array = [1, 2, 3]
 
     assert_equal __, array.to_s
     assert_equal __, array.inspect
@@ -186,5 +180,4 @@ class AboutClasses < Neo::Koan
     assert_equal __, "STRING".to_s
     assert_equal __, "STRING".inspect
   end
-
 end
