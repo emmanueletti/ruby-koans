@@ -1,10 +1,22 @@
-require File.expand_path(File.dirname(__FILE__) + '/neo')
+require File.expand_path(File.dirname(__FILE__) + "/neo")
 
 # Implement a DiceSet Class here:
 #
-# class DiceSet
-#   code ...
-# end
+class DiceSet
+  attr_reader :values
+
+  NUM_OF_DICE_SIDES = 6
+
+  def roll(num_of_dice)
+    # remember: everything in ruby is an object that can be instantiated and
+    # configured in that instantiation
+    # javascript would have had us create and assign an empty array and then
+    # iterate between a range of values to push into the empty array at each
+    # iteration stop
+    # ruby is wayyyy from focused on developer experience
+    @values = Array.new(num_of_dice) { |_i| rand(1..NUM_OF_DICE_SIDES) }
+  end
+end
 
 class AboutDiceProject < Neo::Koan
   def test_can_create_a_dice_set
@@ -40,8 +52,9 @@ class AboutDiceProject < Neo::Koan
     dice.roll(5)
     second_time = dice.values
 
-    assert_not_equal first_time, second_time,
-      "Two rolls should not be equal"
+    # Remember equality assertions don't compare if the contents of Arrays
+    # are equal - they compare if the identity in memory are the same
+    assert_not_equal first_time, second_time, "Two rolls should not be equal"
 
     # THINK ABOUT IT:
     #
@@ -59,5 +72,4 @@ class AboutDiceProject < Neo::Koan
     dice.roll(1)
     assert_equal 1, dice.values.size
   end
-
 end

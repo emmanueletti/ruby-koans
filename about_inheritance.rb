@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/neo')
+require File.expand_path(File.dirname(__FILE__) + "/neo")
 
 class AboutInheritance < Neo::Koan
   class Dog
@@ -24,23 +24,28 @@ class AboutInheritance < Neo::Koan
   end
 
   def test_subclasses_have_the_parent_as_an_ancestor
-    assert_equal __, Chihuahua.ancestors.include?(Dog)
+    assert_equal true, Chihuahua.ancestors.include?(Dog)
   end
 
   def test_all_classes_ultimately_inherit_from_object
-    assert_equal __, Chihuahua.ancestors.include?(Object)
+    assert_equal true, Chihuahua.ancestors.include?(Object)
   end
 
   def test_subclasses_inherit_behavior_from_parent_class
     chico = Chihuahua.new("Chico")
-    assert_equal __, chico.name
+    # NOTE: You call "super" and send values up to the parents
+    # method of the same name IF you are overwriting that method in the child
+
+    # When you send a "new" message to an object, it will first check to
+    # see if it can answer that message itself with a initializer method, if not, then it will check parents and modules
+    assert_equal "Chico", chico.name
   end
 
   def test_subclasses_add_new_behavior
     chico = Chihuahua.new("Chico")
-    assert_equal __, chico.wag
+    assert_equal :happy, chico.wag
 
-    assert_raise(___) do
+    assert_raise(NoMethodError) do
       fido = Dog.new("Fido")
       fido.wag
     end
@@ -48,10 +53,10 @@ class AboutInheritance < Neo::Koan
 
   def test_subclasses_can_modify_existing_behavior
     chico = Chihuahua.new("Chico")
-    assert_equal __, chico.bark
+    assert_equal "yip", chico.bark
 
     fido = Dog.new("Fido")
-    assert_equal __, fido.bark
+    assert_equal "WOOF", fido.bark
   end
 
   # ------------------------------------------------------------------
@@ -64,7 +69,7 @@ class AboutInheritance < Neo::Koan
 
   def test_subclasses_can_invoke_parent_behavior_via_super
     ralph = BullDog.new("Ralph")
-    assert_equal __, ralph.bark
+    assert_equal "WOOF, GROWL", ralph.bark
   end
 
   # ------------------------------------------------------------------
@@ -77,9 +82,6 @@ class AboutInheritance < Neo::Koan
 
   def test_super_does_not_work_cross_method
     george = GreatDane.new("George")
-    assert_raise(___) do
-      george.growl
-    end
+    assert_raise(NoMethodError) { george.growl }
   end
-
 end
