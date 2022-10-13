@@ -74,17 +74,17 @@ class AboutScope < Neo::Koan
   MyString = ::String
 
   def test_class_names_are_just_constants
-    assert_equal __, MyString == ::String
-    assert_equal __, MyString == "HI".class
+    assert_equal true, MyString == ::String
+    assert_equal true, MyString == "HI".class
   end
 
   def test_constants_can_be_looked_up_explicitly
-    assert_equal __, PI == AboutScope.const_get("PI")
-    assert_equal __, MyString == AboutScope.const_get("MyString")
+    assert_equal true, PI == AboutScope.const_get("PI")
+    assert_equal true, MyString == AboutScope.const_get("MyString")
   end
 
   def test_you_can_get_a_list_of_constants_for_any_class_or_module
-    assert_equal __, Jims.constants
-    assert Object.constants.size > _n_
+    assert_equal [:Dog], Jims.constants
+    assert Object.constants.size > 0
   end
 end
