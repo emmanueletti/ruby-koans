@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/neo')
+require File.expand_path(File.dirname(__FILE__) + "/neo")
 
 # Project: Create a Proxy Class
 #
@@ -13,12 +13,36 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 # of the Proxy class is given in the AboutProxyObjectProject koan.
 
 class Proxy
+  attr_reader :messages
+
   def initialize(target_object)
     @object = target_object
-    # ADD MORE CODE HERE
+    @messages = []
   end
 
-  # WRITE CODE HERE
+  def called?(method_name)
+    messages.include?(method_name)
+  end
+
+  def number_of_times_called(method_name)
+    messages.count(method_name)
+  end
+
+  private
+
+  attr_reader :object
+
+  def method_missing(method_name, *args, &block)
+    messages.push(method_name)
+    # no need to check if the target object can respond to the method first before sending b/c the target object will
+    # have the default implementation of method missing if it can't respond to the method
+    object.send(method_name, *args, &block)
+  end
+
+  def respond_to_missing?(method_name, include_private = false)
+    # if the target object can respond to the method then we respond true
+    object.respond_to?(method_name) || super
+  end
 end
 
 # The proxy object should pass the following Koan:
@@ -67,7 +91,7 @@ class AboutProxyObjectProject < Neo::Koan
     tv.power
 
     assert tv.called?(:power)
-    assert ! tv.called?(:channel)
+    assert !tv.called?(:channel)
   end
 
   def test_proxy_counts_method_calls
@@ -93,7 +117,6 @@ class AboutProxyObjectProject < Neo::Koan
   end
 end
 
-
 # ====================================================================
 # The following code is to support the testing of the Proxy class.  No
 # changes should be necessary to anything below this comment.
@@ -103,10 +126,10 @@ class Television
   attr_accessor :channel
 
   def power
-    if @power == :on
-      @power = :off
+    @power = if @power == :on
+      :off
     else
-      @power = :on
+      :on
     end
   end
 
@@ -130,7 +153,7 @@ class TelevisionTest < Neo::Koan
     tv.power
     tv.power
 
-    assert ! tv.on?
+    assert !tv.on?
   end
 
   def test_edge_case_on_off
@@ -144,7 +167,7 @@ class TelevisionTest < Neo::Koan
 
     tv.power
 
-    assert ! tv.on?
+    assert !tv.on?
   end
 
   def test_can_set_the_channel

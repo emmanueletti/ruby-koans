@@ -22,7 +22,7 @@ class AboutMessagePassing < Neo::Koan
   def test_methods_can_be_invoked_more_dynamically
     mc = MessageCatcher.new
 
-    assert mc.send("caught?")
+    assert mc.send(:caught?)
     assert mc.send("caught" + "?") # What do you need to add to the first string?
     assert mc.send("CAUGHT?".downcase) # What would you need to do to the string?
   end
@@ -42,8 +42,8 @@ class AboutMessagePassing < Neo::Koan
   def test_classes_can_be_asked_if_they_know_how_to_respond
     mc = MessageCatcher.new
 
-    assert_equal __, mc.respond_to?(:caught?)
-    assert_equal __, mc.respond_to?(:does_not_exist)
+    assert_equal true, mc.respond_to?(:caught?)
+    assert_equal false, mc.respond_to?(:does_not_exist)
   end
 
   # ------------------------------------------------------------------
@@ -57,11 +57,11 @@ class AboutMessagePassing < Neo::Koan
   def test_sending_a_message_with_arguments
     mc = MessageCatcher.new
 
-    assert_equal __, mc.add_a_payload
-    assert_equal __, mc.send(:add_a_payload)
+    assert_equal [], mc.add_a_payload
+    assert_equal [], mc.send(:add_a_payload)
 
-    assert_equal __, mc.add_a_payload(3, 4, nil, 6)
-    assert_equal __, mc.send(:add_a_payload, 3, 4, nil, 6)
+    assert_equal [3, 4, nil, 6], mc.add_a_payload(3, 4, nil, 6)
+    assert_equal [3, 4, nil, 6], mc.send(:add_a_payload, 3, 4, nil, 6)
   end
 
   # NOTE:
@@ -110,7 +110,7 @@ class AboutMessagePassing < Neo::Koan
   # ------------------------------------------------------------------
 
   class AllMessageCatcher
-    def method_missing(method_name, *args, &block)
+    def method_missing(method_name, *args)
       "Someone called #{method_name} with <#{args.join(", ")}>"
     end
 
@@ -126,16 +126,25 @@ class AboutMessagePassing < Neo::Koan
   def test_all_messages_are_caught
     catcher = AllMessageCatcher.new
 
-    assert_equal "Someone called foobar with ", catcher.foobar
-    assert_equal "Someone called foobar with 1", catcher.foobaz(1)
-    assert_equal "Someone called foobar with 1, 2, 3, 4, 5, 6", catcher.sum(1, 2, 3, 4, 5, 6)
+    assert_equal "Someone called foobar with <>", catcher.foobar
+    assert_equal "Someone called foobaz with <1>", catcher.foobaz(1)
+    assert_equal "Someone called sum with <1, 2, 3, 4, 5, 6>", catcher.sum(1, 2, 3, 4, 5, 6)
   end
 
   def test_catching_messages_makes_respond_to_lie
     catcher = AllMessageCatcher.new
 
     assert_nothing_raised { catcher.any_method }
-    assert_equal true, catcher.respond_to?(:any_method)
+    assert_equal false, catcher.respond_to?(:any_method)
+    # any_method is being caught and so catcher is able to respond to it
+    # BUT "respond_to?"is looking for an explicit definition of "any_method" which it cannot find
+    # When overriding "method_missing" on an object, very very important to also override "respond_to_missing?"
+    # UPDATE (19-0CT-2022) -> do not override / specialize "respond_to?", override / specialize "respond_to_missing?"
+    # BUT when trying to see if an object that you havent overriden a method_missing on can respond to a method, then
+    # use "respond_to?"
+    # reason seems to be that "respond_to_missing?" covers some bases that "respong_to" doesnt
+    # https://blog.marc-andre.ca/2010/11/15/methodmissing-politely/
+    # https://thoughtbot.com/blog/always-define-respond-to-missing-when-overriding
   end
 
   # ------------------------------------------------------------------
@@ -176,17 +185,21 @@ class AboutMessagePassing < Neo::Koan
     end
   end
 
+  # since we are catching methods that begin with "foo" we also have to define respond_to? to tell the program that
+  # methods beginning with "foo" are able to be responded to
+  # UPDATE (19-0CT-2022) -> do not override / specialize "respond_to?", override / specialize "respond_to_missing?"
+  # see above UPDATE comment for more details
+
   def test_explicitly_implementing_respond_to_lets_objects_tell_the_truth
     catcher = WellBehavedFooCatcher.new
 
     assert_equal true, catcher.respond_to?(:foo_bar)
 
-    # without reimplementing respond_to?, the result would be true
     assert_equal false, catcher.respond_to?(:something_else)
   end
 end
 
-# seems that the combination of "send" and "method_missing" is what allows Rails to perform its magic
+# seems that the combination of "send" and "method_missing" is what allows Rails to perform some of its magic
 # - with "send" you can send messages to an object that are dynamically created at runtime - even based on user input
 # - with careful redefinitions of "method_missing" and some regex pattern matching you can have objects react to the
 # dynamic send messages and do stuff with it
